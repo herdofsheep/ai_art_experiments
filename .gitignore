@@ -1,0 +1,8 @@
+image_renders/*
+data/style/*
+data/style2/*
+data/content/*
+data/animation/*
+outputs/*
+.venv
+.DS_Store
