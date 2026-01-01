@@ -11,7 +11,12 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-3. Populate Image Folders
+3. Allow SSH downloads
 
-`data/style` should be filled with style images you want to apply
-`data/content` should be filled with images you want to apply style to
+`/Applications/Python\ 3.12/Install\ Certificates.command`
+
+4. Populate Image Folders
+
+`data/style` should be filled with style images you want to apply.
+
+`data/content` should be filled with images you want to apply style to.

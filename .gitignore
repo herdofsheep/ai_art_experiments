@@ -4,5 +4,6 @@ data/style2/*
 data/content/*
 data/animation/*
 outputs/*
+models/*
 .venv
 .DS_Store
