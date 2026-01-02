@@ -9,12 +9,14 @@ from PIL import Image
 import numpy as np
 import glob
 
+from tools import imagepaths_list_from_folder
+
 # --- Config ---
 IMAGE_SIZE = 512
 STYLE_WEIGHT = 1e6
 CONTENT_WEIGHT = 1
 NUM_STEPS = 300  # Lower = faster but less refined
-OUTPUT_DIR = '../outputs/pytorch_animation'
+OUTPUT_DIR = 'outputs/pytorch_animation3'
 
 # --- Setup ---
 device = torch.device("mps" if torch.backends.mps.is_available() else 
@@ -119,12 +121,8 @@ def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
     # Load styles (supports jpg, png, jpeg, webp)
-    style_files = sorted(glob.glob("../data/style"))
-    style_files = [f for f in style_files if not os.path.basename(f).startswith('.')]
-    
-    if len(style_files) == 0:
-        print("No style images found in ../data/style/")
-        return
+    style_files = imagepaths_list_from_folder("data/style2")
+    content_frames = sorted(glob.glob('data/animation_paler/*.png'))
     
     print(f"Found {len(style_files)} style images")
     
@@ -133,10 +131,6 @@ def main():
     style_grams = [get_style_grams(s) for s in style_files]
     
     # Load animation frames
-    content_frames = sorted(glob.glob('../data/animation/*.png'))
-    if len(content_frames) == 0:
-        print("No animation frames found in ../data/animation/")
-        return
     
     print(f"Processing {len(content_frames)} frames...")
     
@@ -150,7 +144,7 @@ def main():
             s1, s2 = int(np.floor(style_idx)), min(int(np.ceil(style_idx)), len(style_grams) - 1)
             weight = style_idx - s1
             blended_grams = interpolate_grams(style_grams[s1], style_grams[s2], weight)
-            print(f"  Blending styles {s1} ({1-weight:.1%}) + {s2} ({weight:.1%})")
+            print(f"  Blending styles {style_files[s1]} ({1-weight:.1%}) + {style_files[s2]} ({weight:.1%})")
         else:
             blended_grams = style_grams[0]
         

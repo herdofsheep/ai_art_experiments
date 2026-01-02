@@ -1,8 +1,5 @@
 image_renders/*
-data/style/*
-data/style2/*
-data/content/*
-data/animation/*
+data/*
 outputs/*
 models/*
 .venv
