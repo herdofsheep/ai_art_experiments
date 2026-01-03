@@ -5,3 +5,5 @@ models/*
 .venv
 .DS_Store
 .env
+Pipfile
+Pipfile.lock
