@@ -4,6 +4,14 @@ jupyter
 matplotlib
 tensorflow
 tensorflow_hub
+kagglehub
+diffusers
+# transformers>=4.25.0
+accelerate
 torch
 torchvision
-kagglehub
+Pillow
+numpy
+tqdm
+safetensors
+einops
