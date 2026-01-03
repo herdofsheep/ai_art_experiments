@@ -6,12 +6,13 @@ from huggingface_hub import whoami
 import torch
 from PIL import Image
 from dotenv import load_dotenv
+from glob import glob
 
 load_dotenv()
 
-OUTPUT_DIR = 'outputs/stable_diffusion_test'
-STYLE_IMAGE_PATH = 'data/style2/sex_doll2.jpg'
-CONTENT_IMAGE_PATH = 'data/content/grid1.jpg'
+OUTPUT_DIR = 'outputs/stable_diffusion_animation_test'
+ANIMATION_PATH = 'data/animation'
+STYLE_IMAGE_PATH = 'data/style/sex_doll2.png'
 
 def load_img_to_img_pipeline():
     print("Loading image to image generation pipeline with IP-Adapter...")
@@ -49,7 +50,7 @@ def load_img_to_img_pipeline():
     return pipe
 
 
-def generate_img_to_img_image(pipe, style_image_path, content_image_path):
+def generate_img_to_img_image(pipe, style_image_path, content_image_path, frame_number):
     print("Generating styled image...")
     
     # Load and resize images
@@ -70,8 +71,8 @@ def generate_img_to_img_image(pipe, style_image_path, content_image_path):
     
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
-    image.save(os.path.join(OUTPUT_DIR, "output_img2img.png"))
-    print(f"Image saved to {OUTPUT_DIR}/output_img2img.png")
+    image.save(os.path.join(OUTPUT_DIR, f"{frame_number}.png"))
+    print(f"Image saved to {OUTPUT_DIR}/{frame_number}.png")
     return image
 
 
@@ -79,12 +80,16 @@ def main():
     # HF_TOKEN from .env is automatically used
     print("Logged in as:", whoami()['name'])
     img_to_img_pipe = load_img_to_img_pipeline()
+    animation_frames = sorted(glob(f'{ANIMATION_PATH}/*.png'))
 
-    generate_img_to_img_image(
-        img_to_img_pipe,
-        style_image_path=STYLE_IMAGE_PATH,  # Style to apply
-        content_image_path=CONTENT_IMAGE_PATH  # Content to transform
-    )
+    for frame in animation_frames:
+        frame_number = frame.split('/')[-1].split('.')[0]
+        generate_img_to_img_image(
+            img_to_img_pipe,
+            style_image_path=STYLE_IMAGE_PATH,  # Style to apply
+            content_image_path=frame  # Content to transform
+            frame_number=frame_number
+        )
 
 
 if __name__ == "__main__":
