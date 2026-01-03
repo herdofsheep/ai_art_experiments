@@ -9,30 +9,33 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from diffusers import AutoPipelineForImage2Image
-
-DEVICE = "mps" 
-DTYPE = torch.float16
-
 OUTPUT_DIR = 'outputs/stable_diffusion_prompt_to_img_test'
-
+CONTENT_IMAGE_PATH = 'data/content/grid1.jpg'
+STYLE_PROMPT = "A sex doll, 8k, detailed, realistic"
 
 def load_pipeline():
     print("Loading SDXL Image-to-Image pipeline...")
+    from diffusers import AutoPipelineForImage2Image
+
+    model_id = "runwayml/stable-diffusion-v1-5"
     # Using AutoPipelineForImage2Image automatically handles the i2i logic
     pipe = AutoPipelineForImage2Image.from_pretrained(
         "stabilityai/stable-diffusion-xl-base-1.0", 
-        torch_dtype=DTYPE,
+        torch_dtype=torch.float32,
         variant="fp16", # Loads smaller files to save RAM
         use_safetensors=True
     )
     
-    # Critical for Mac performance
-    pipe.to(DEVICE)
-    
+    # Controls style influence (0-1)
+    # 0 = original image, 1 = entirely new image.
+    pipe.set_ip_adapter_scale(0.8)
+
+    # Try mps
+    pipe.to("mps")
     # Enable attention slicing to save memory if you run other apps
     pipe.enable_attention_slicing()
-    
+    print("Pipeline loaded!")
+
     return pipe
 
 
@@ -67,9 +70,9 @@ def main():
     style_desc = "A sex doll, 8k, detailed, realistic"
     
     process_frame(
-        pipe, 
-        "data/content/grid1.jpg",
-        style_desc
+        pipe,
+        content_path=CONTENT_IMAGE_PATH,
+        style_prompt=STYLE_PROMPT,
     )
 
 
