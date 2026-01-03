@@ -1,6 +1,7 @@
 #
 # Stable Diffusion Prompt+Image to Image Pipeline
 # Interestingly, way slower than the image to image pipeline
+# Also, results are not as good as the image to image pipeline.
 #
 
 OUTPUT_PATH = 'outputs/stable_diffusion_prompt_to_img_test.png'
@@ -60,9 +61,8 @@ def process_frame(pipe, content_path, style_prompt):
         num_inference_steps=30
     ).images[0]
     
-    save_path = os.path.join(OUTPUT_PATH, "output_styled.png")
-    image.save(save_path)
-    print(f"Saved to {save_path}")
+    image.save(OUTPUT_PATH)
+    print(f"Saved to {OUTPUT_PATH}")
 
 
 def main():
