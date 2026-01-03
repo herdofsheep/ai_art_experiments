@@ -1,3 +1,14 @@
+#
+# Stable Diffusion Image+Style Image to Image Pipeline
+# This is the fastest way to generate an image from 
+# a style and a content image.
+# Nice results, doesn't animate great.
+#
+
+OUTPUT_PATH = 'outputs/stable_diffusion_test_NSFW.png'
+STYLE_IMAGE_PATH = 'data/style2/sex_doll2.jpg'
+CONTENT_IMAGE_PATH = 'data/content/images.png'
+
 import os
 os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
 os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'huggingface')
@@ -8,10 +19,6 @@ from dotenv import load_dotenv
 from tools import load_img_to_img_pipeline, generate_img_to_img
 
 load_dotenv()
-
-OUTPUT_PATH = 'outputs/stable_diffusion_test_NSFW.png'
-STYLE_IMAGE_PATH = 'data/style2/sex_doll2.jpg'
-CONTENT_IMAGE_PATH = 'data/content/images.png'
 
 
 def main():

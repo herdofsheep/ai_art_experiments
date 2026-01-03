@@ -1,3 +1,19 @@
+#
+# Stable Diffusion Animation Pipeline 1
+# This is a basic stable diffusion animation pipeline
+# It uses the image to image pipeline to generate an image from a style and a content image
+# It then blends the image with the previous frame to reduce flicker
+# Not great results, but it's a starting point.
+#
+
+
+OUTPUT_DIR = 'outputs/stable_diffusion_animation_more_blend'
+ANIMATION_DIR = 'data/animation_paler'
+STYLE_IMAGE_PATH = 'data/style2/sex_doll2.jpg'
+
+# Temporal blending: 0 = no blending, 0.3 = mild smoothing, 0.5+ = strong (may ghost)
+TEMPORAL_BLEND = 0.7
+
 import os
 os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
 os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'huggingface')
@@ -11,13 +27,6 @@ import numpy as np
 from tools import load_img_to_img_pipeline, generate_img_to_img
 
 load_dotenv()
-
-OUTPUT_DIR = 'outputs/stable_diffusion_animation_more_blend'
-ANIMATION_DIR = 'data/animation_paler'
-STYLE_IMAGE_PATH = 'data/style2/sex_doll2.jpg'
-
-# Temporal blending: 0 = no blending, 0.3 = mild smoothing, 0.5+ = strong (may ghost)
-TEMPORAL_BLEND = 0.7
 
 
 def blend_images(current: Image.Image, previous: Image.Image, blend_factor: float) -> Image.Image:

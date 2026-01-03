@@ -1,0 +1,2 @@
+- get a good video style transfer to work with the cubes animation
+- see if I can get Flux2 or Flux-schnell to work with singular image generation

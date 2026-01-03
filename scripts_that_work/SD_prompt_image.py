@@ -1,3 +1,12 @@
+#
+# Stable Diffusion Prompt+Image to Image Pipeline
+# Interestingly, way slower than the image to image pipeline
+#
+
+OUTPUT_PATH = 'outputs/stable_diffusion_prompt_to_img_test.png'
+CONTENT_IMAGE_PATH = 'data/content/grid1.jpg'
+STYLE_PROMPT = "A sex doll, 8k, detailed, realistic"
+
 import os
 os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
 os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'huggingface')
@@ -8,10 +17,6 @@ from PIL import Image
 from dotenv import load_dotenv
 
 load_dotenv()
-
-OUTPUT_PATH = 'outputs/stable_diffusion_prompt_to_img_test.png'
-CONTENT_IMAGE_PATH = 'data/content/grid1.jpg'
-STYLE_PROMPT = "A sex doll, 8k, detailed, realistic"
 
 def load_pipeline():
     print("Loading SDXL Image-to-Image pipeline...")

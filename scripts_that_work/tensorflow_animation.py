@@ -1,3 +1,16 @@
+#
+# TensorFlow Animation Pipeline
+# Really quick results.
+# It uses the tensorflow hub model to generate an image 
+# from a style and a content image.
+# It then blends the image with the previous frame to reduce flicker
+# Not great results, but it's a starting point.
+#
+
+OUTPUT_DIR = 'outputs/animation_script_test'
+ANIMATION_DIR = 'data/animation'
+STYLE_DIR = 'data/style'
+
 import os
 os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
 
@@ -7,12 +20,6 @@ import PIL
 import glob
 import kagglehub
 import tensorflow_hub as hub
-
-
-OUTPUT_DIR = 'outputs/animation_script_test'
-ANIMATION_DIR = 'data/animation'
-STYLE_DIR = 'data/style'
-
 
 def imagepaths_list_from_folder(folder_path):
     return [f"{folder_path}/{f}" for f in os.listdir(folder_path) if not f.startswith('.')]
