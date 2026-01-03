@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-OUTPUT_DIR = 'outputs/stable_diffusion_prompt_to_img_test'
+OUTPUT_PATH = 'outputs/stable_diffusion_prompt_to_img_test.png'
 CONTENT_IMAGE_PATH = 'data/content/grid1.jpg'
 STYLE_PROMPT = "A sex doll, 8k, detailed, realistic"
 
@@ -55,7 +55,7 @@ def process_frame(pipe, content_path, style_prompt):
         num_inference_steps=30
     ).images[0]
     
-    save_path = os.path.join(OUTPUT_DIR, "output_styled.png")
+    save_path = os.path.join(OUTPUT_PATH, "output_styled.png")
     image.save(save_path)
     print(f"Saved to {save_path}")
 
@@ -65,9 +65,6 @@ def main():
     print("Logged in as:", whoami()['name'])
     # Load pipeline once
     pipe = load_pipeline()
-    
-    # Define your style in the prompt
-    style_desc = "A sex doll, 8k, detailed, realistic"
     
     process_frame(
         pipe,

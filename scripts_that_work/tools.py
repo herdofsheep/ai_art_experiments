@@ -29,7 +29,7 @@ def load_img_to_img_pipeline(adapter_scale=0.8):
     return pipe
 
 
-def generate_img_to_img(pipe, style_image_path, content_image_path, output_path):
+def generate_img_to_img(pipe, style_image_path, content_image_path, output_path=None):
     # Load and resize images
     style_image = Image.open(style_image_path).convert("RGB")
     style_image = style_image.resize((512, 512))
@@ -46,6 +46,7 @@ def generate_img_to_img(pipe, style_image_path, content_image_path, output_path)
             num_inference_steps=30
         ).images[0]
     
-    image.save(output_path)
-    print(f"Image saved to {output_path}")
+    if output_path:
+        image.save(output_path)
+        print(f"Image saved to {output_path}")
     return image

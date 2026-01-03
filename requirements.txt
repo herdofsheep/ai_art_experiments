@@ -16,3 +16,4 @@ numpy
 safetensors
 python-dotenv
 sentencepiece
+opencv-python
