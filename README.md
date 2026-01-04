@@ -2,7 +2,8 @@
 
 ```shell
 python -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate (mac)
+.\.venv\Scripts\Activate.ps1 (windows)
 ```
 
 2. Install dependencies
@@ -24,4 +25,6 @@ pip install -r requirements.txt
 
 6. Choose your script and allocate correct paths eg. STYLE_IMAGE_PATH = "data/<your_file_name>" for the images you populated in step 4.
 
-7. Run your script of choice eg. `python3 scripts_that_work/SD_controlnet_animation.py`. Make sure you are running python from this directory, and expect the runtime to be VERY slow (up to half an hour) before producing any images. Downloading the AI model can take a long time.
+IF ON WINDOWS- SWITCH `METHOD` to "cuda"
+
+7. Run your script of choice eg. `python scripts_that_work/SD_controlnet_animation.py`. Make sure you are running python from this directory, and expect the runtime to be VERY slow (up to half an hour) before producing any images. Downloading the AI model can take a long time.

@@ -1,14 +1,3 @@
-OUTPUT_DIR = 'outputs/SD_controlnet_animation_boob'
-ANIMATION_DIR = "data/boob_animation"
-STYLE_IMAGE_PATH = "data/content/sciency.webp"
-PROMPT = "A scientific diagram"
-
-ADAPTER_SCALE = 1.0 # strength of style influence on output image
-TRANSFORM_STRENGTH = 0.75 # strength allowed deviation from original image
-CONTROLNET_CONDITIONING_SCALE = 0.5 # strength of edges, style constraint
-NUM_INFERENCE_STEPS = 15 # balanced steps
-GUIDANCE_SCALE = 4.0 # moderate guidance (MPS can be unstable with high values)
-
 import os
 os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
 os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'huggingface')
@@ -21,19 +10,34 @@ import numpy as np
 from PIL import Image
 from glob import glob
 
+OUTPUT_DIR = 'outputs/SD_controlnet_animation_boob'
+ANIMATION_DIR = "data/boob_animation"
+STYLE_IMAGE_PATH = "data/sciency.webp"
+PROMPT = "A scientific diagram"
+
+ADAPTER_SCALE = 1.0 # strength of style influence on output image
+TRANSFORM_STRENGTH = 0.75 # strength allowed deviation from original image
+CONTROLNET_CONDITIONING_SCALE = 0.5 # strength of edges, style constraint
+NUM_INFERENCE_STEPS = 15 # balanced steps
+GUIDANCE_SCALE = 4.0 # moderate guidance (MPS can be unstable with high values)
+
+# METHOD = "mps" #mac
+METHOD = "cuda" #windows
+BIT = torch.float16 #use float32 on mac and float16 on Windows
+
 def load_video_style_pipe():
     # 1. Load ControlNet (Canny is best for keeping animation lines)
     controlnet = ControlNetModel.from_pretrained(
-        "lllyasviel/sd-controlnet-canny", torch_dtype=torch.float32,
+        "lllyasviel/sd-controlnet-canny", torch_dtype=BIT,
     )
 
     # 2. Load the main Pipeline
     pipe = StableDiffusionControlNetImg2ImgPipeline.from_pretrained(
         "runwayml/stable-diffusion-v1-5",
         controlnet=controlnet,
-        torch_dtype=torch.float32,
+        torch_dtype=BIT,
         safety_checker=None
-    ).to("mps")
+    ).to(METHOD)
 
     # 3. Use DPM++ scheduler (better quality) & stronger IP-Adapter for style
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
