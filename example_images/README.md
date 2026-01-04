@@ -3,7 +3,7 @@
     ANIMATION_DIR = (folder with this in) `animation_frame1.png`
     STYLE_IMAGE_PATH = `sexdoll.jpg`
 
-###controlnet_img2img_animation.png:
+### controlnet_img2img_animation.png:
     created with `SD_controlnet_animation.py` using
     ANIMATION_DIR = (folder with this in) `animation_frame_paler1.png`
     STYLE_IMAGE_PATH = `sexdoll.jpg`
@@ -15,17 +15,17 @@
     NUM_INFERENCE_STEPS = 15
     GUIDANCE_SCALE = 4.0
 
-SD_imgtoimg.png: 
+### SD_imgtoimg.png: 
     created with `SD_img_to_img.py` using 
     STYLE_IMAGE_PATH = `sexdoll.jpg`
     CONTENT_IMAGE_PATH = `animation_frame1.png`
 
-stable_diffusion_prompt_to_img_test.png:
+### stable_diffusion_prompt_to_img_test.png:
     created with `SD_prompt_image.py` using
     STYLE_PROMPT = "A sex doll, 8k, detailed, realistic"
     CONTENT_IMAGE_PATH = 'grid1.jpg'
 
-tensorflow_animation_frame.png:
+### tensorflow_animation_frame.png:
     created with `tensorflow_animation.py` using
     STYLE_IMAGE_PATH = 'sexdoll.jpg' (actually a similar image but I'm too lazy to perfectly recreate)
     CONTENT_IMAGE_PATH = 'animation_frame1.png'
