@@ -1,7 +1,7 @@
-OUTPUT_DIR = 'outputs/SD_controlnet_animation_boob'
-ANIMATION_DIR = "data/boob_animation"
-STYLE_IMAGE_PATH = "data/content/sciency.webp"
-PROMPT = "A scientific diagram"
+OUTPUT_DIR = 'outputs/stable_diffusion_animation_more_blend'
+ANIMATION_DIR = "data/animation_paler"
+STYLE_IMAGE_PATH = "data/style2/sex_doll2.jpg"
+PROMPT = "A sex doll, 8k, detailed, realistic"
 
 ADAPTER_SCALE = 1.0 # strength of style influence on output image
 TRANSFORM_STRENGTH = 0.75 # strength allowed deviation from original image
@@ -21,6 +21,8 @@ import cv2
 import numpy as np
 from PIL import Image
 from glob import glob
+
+from tools import get_last_styled_frame
 
 def load_video_style_pipe():
     # 1. Load ControlNet (Canny is best for keeping animation lines)
@@ -50,6 +52,8 @@ def get_canny_image(image):
     image = image[:, :, None]
     image = np.concatenate([image, image, image], axis=2)
     return Image.fromarray(image)
+
+
 
 def style_frame(pipe, content_img, prompt, style_embeds, prev_styled_frame=None):
     content_img = content_img.resize((512, 512))
@@ -98,9 +102,10 @@ def main():
 
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
-    animation_frames = sorted(glob(f'{ANIMATION_DIR}/*.png'))
+
+    last_frame_index, prev_styled_frame = get_last_styled_frame(OUTPUT_DIR)
+    animation_frames = sorted(glob(f'{ANIMATION_DIR}/*.png'))[last_frame_index:]
     
-    prev_styled_frame = None
     for i, frame_path in enumerate(animation_frames):
         print(f"Styling frame {i} to {OUTPUT_DIR}...")
         content_image = load_image(frame_path)
