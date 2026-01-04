@@ -1,13 +1,13 @@
-OUTPUT_DIR = 'outputs/SD_controlnet_animation'
-ANIMATION_DIR = "data/animation_paler"
-STYLE_IMAGE_PATH = "data/style2/sex_doll2.jpg"
-PROMPT = "A sex doll, detailed, realistic"
+OUTPUT_DIR = 'outputs/SD_controlnet_animation_boob'
+ANIMATION_DIR = "data/boob_animation"
+STYLE_IMAGE_PATH = "data/content/sciency.webp"
+PROMPT = "A scientific diagram"
 
-ADAPTER_SCALE = 1.5 # strength of style influence on output image (cranked up)
-TRANSFORM_STRENGTH = 0.85 # strength allowed deviation from original image
-CONTROLNET_CONDITIONING_SCALE = 0.4 # strength of edges, style constraint (loosened more)
-NUM_INFERENCE_STEPS = 20 # more steps now that we're not using LCM
-GUIDANCE_SCALE = 7.5 # standard SD guidance scale
+ADAPTER_SCALE = 1.0 # strength of style influence on output image
+TRANSFORM_STRENGTH = 0.75 # strength allowed deviation from original image
+CONTROLNET_CONDITIONING_SCALE = 0.5 # strength of edges, style constraint
+NUM_INFERENCE_STEPS = 15 # balanced steps
+GUIDANCE_SCALE = 4.0 # moderate guidance (MPS can be unstable with high values)
 
 import os
 os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
@@ -90,6 +90,7 @@ def main():
         print(f"Styling frame {i} to {OUTPUT_DIR}...")
         content_image = load_image(frame_path)
         result = style_frame(pipe, content_image, PROMPT, style_embeds)
+        result = result.resize(content_image.size)
         result.save(f"{OUTPUT_DIR}/{i}.png")
 
 if __name__ == "__main__":

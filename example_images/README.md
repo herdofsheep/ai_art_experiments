@@ -1,18 +1,34 @@
-SD_imgtoimg.png: 
-    created with `SD_img_to_img.py` with 
-    STYLE_IMAGE_PATH = 'sexdoll.jpg'
-    CONTENT_IMAGE_PATH = 'animation_frame1.png'
+### SD_img2img_animation1.png:
+    created with `SD_animation1.py` using
+    ANIMATION_DIR = (folder with this in) `animation_frame1.png`
+    STYLE_IMAGE_PATH = `sexdoll.jpg`
 
-tensorflow_animation_frame.png:
-    created with `tensorflow_animation.py` with
-    STYLE_IMAGE_PATH = 'sexdoll.jpg' (actually a similar image but I'm too lazy to perfectly recreate)
-    CONTENT_IMAGE_PATH = 'animation_frame1.png'
+###controlnet_img2img_animation.png:
+    created with `SD_controlnet_animation.py` using
+    ANIMATION_DIR = (folder with this in) `animation_frame_paler1.png`
+    STYLE_IMAGE_PATH = `sexdoll.jpg`
+    PROMPT = "A sex doll, detailed, realistic"
+
+    ADAPTER_SCALE = 1.0
+    TRANSFORM_STRENGTH = 0.75
+    CONTROLNET_CONDITIONING_SCALE = 0.5
+    NUM_INFERENCE_STEPS = 15
+    GUIDANCE_SCALE = 4.0
+
+SD_imgtoimg.png: 
+    created with `SD_img_to_img.py` using 
+    STYLE_IMAGE_PATH = `sexdoll.jpg`
+    CONTENT_IMAGE_PATH = `animation_frame1.png`
 
 stable_diffusion_prompt_to_img_test.png:
-    created with `SD_prompt_image.py` with
+    created with `SD_prompt_image.py` using
     STYLE_PROMPT = "A sex doll, 8k, detailed, realistic"
     CONTENT_IMAGE_PATH = 'grid1.jpg'
 
-SD_img2img_animation1.png:
-    created with `SD_animation1.py` with
-    
+tensorflow_animation_frame.png:
+    created with `tensorflow_animation.py` using
+    STYLE_IMAGE_PATH = 'sexdoll.jpg' (actually a similar image but I'm too lazy to perfectly recreate)
+    CONTENT_IMAGE_PATH = 'animation_frame1.png'
+
+
+
