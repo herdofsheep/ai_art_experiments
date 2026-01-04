@@ -17,3 +17,4 @@ safetensors
 python-dotenv
 sentencepiece
 opencv-python
+--extra-index-url https://download.pytorch.org/whl/cu121 #for using cuda on Windows machines
