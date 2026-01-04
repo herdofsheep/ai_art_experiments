@@ -12,7 +12,8 @@ ANIMATION_DIR = 'data/animation_paler'
 STYLE_IMAGE_PATH = 'data/style2/sex_doll2.jpg'
 
 # Temporal blending: 0 = no blending, 0.3 = mild smoothing, 0.5+ = strong (may ghost)
-TEMPORAL_BLEND = 0.7
+TEMPORAL_BLEND = 0.5
+ADAPTER_SCALE = 0.6
 
 import os
 os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
@@ -40,7 +41,7 @@ def blend_images(current: Image.Image, previous: Image.Image, blend_factor: floa
 def main():
     # HF_TOKEN from .env is automatically used
     print("Logged in as:", whoami()['name'])
-    img_to_img_pipe = load_img_to_img_pipeline(adapter_scale=0.2)
+    img_to_img_pipe = load_img_to_img_pipeline(adapter_scale=ADAPTER_SCALE)
     animation_frames = sorted(glob(f'{ANIMATION_DIR}/*.png'))
 
     if not os.path.exists(OUTPUT_DIR):

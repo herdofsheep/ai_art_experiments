@@ -1,8 +1,8 @@
-
-OUTPUT_DIR = 'outputs/stable_diffusion_animation_more_blend'
+OUTPUT_DIR = 'outputs/SD_controlnet_animation'
 ANIMATION_DIR = "data/animation_paler"
 STYLE_IMAGE_PATH = "data/style2/sex_doll2.jpg"
-PROMPT = "A sex doll, 8k, detailed, realistic"
+PROMPT = "A sex doll, detailed, realistic"
+ADAPTER_SCALE = 0.6
 
 import torch
 from diffusers import StableDiffusionControlNetImg2ImgPipeline, ControlNetModel, LCMScheduler
@@ -29,9 +29,8 @@ def load_video_style_pipe():
     # 3. Add LCM for speed & IP-Adapter for style
     pipe.scheduler = LCMScheduler.from_config(pipe.scheduler.config)
     pipe.load_ip_adapter("h94/IP-Adapter", subfolder="models", weight_name="ip-adapter_sd15.bin")
-    
-    pipe.set_ip_adapter_scale(0.6)
-    pipe.enable_attention_slicing()
+    pipe.set_ip_adapter_scale(0.8)
+
     return pipe
 
 def get_canny_image(image):
@@ -42,18 +41,17 @@ def get_canny_image(image):
     image = np.concatenate([image, image, image], axis=2)
     return Image.fromarray(image)
 
-def style_frame(pipe, content_path, style_image, prompt):
-    print(f"Styling frame {content_path}...")
-    content_img = load_image(content_path).resize((512, 512))
+def style_frame(pipe, content_img, prompt, style_embeds):
+    content_img = content_img.resize((512, 512))
     canny_img = get_canny_image(content_img)
 
     # The magic happens here: 
-    # image = structural guide, control_image = edge guide, ip_adapter = style guide
+    # image = structural guide, control_image = edge guide, ip_adapter_image_embeds = style guide
     result = pipe(
         prompt=prompt,
         image=content_img,
         control_image=canny_img,
-        ip_adapter_image=style_image,
+        ip_adapter_image_embeds=style_embeds,
         strength=0.6,            # How much to change the original
         controlnet_conditioning_scale=0.8, 
         num_inference_steps=4,   # LCM speed
@@ -63,12 +61,25 @@ def style_frame(pipe, content_path, style_image, prompt):
 
 def main():
     pipe = load_video_style_pipe()
-    style_image = load_image(STYLE_IMAGE_PATH)
+    style_image = load_image(STYLE_IMAGE_PATH).resize((512, 512))
+    
+    # Pre-encode style image to avoid IP-Adapter + ControlNet tuple bug
+    # encode_image returns (image_embeds, uncond_image_embeds)
+    image_embeds, uncond_embeds = pipe.encode_image(style_image, device=pipe.device, num_images_per_prompt=1)
+    # Pipeline expects negative + positive concatenated, then chunks them
+    # Both need to be 3D tensors
+    if image_embeds.dim() == 2:
+        image_embeds = image_embeds.unsqueeze(0)
+        uncond_embeds = uncond_embeds.unsqueeze(0)
+    # Concatenate: [negative, positive] so chunk(2) works
+    style_embeds = [torch.cat([uncond_embeds, image_embeds], dim=0)]
+    
     animation_frames = sorted(glob(f'{ANIMATION_DIR}/*.png'))
-    for i, frame in enumerate(animation_frames):
-        content_image = load_image(frame)
-        frame = style_frame(pipe, content_image, style_image, PROMPT)
-        frame.save(f"{OUTPUT_DIR}/{i}.png")
+    for i, frame_path in enumerate(animation_frames):
+        print(f"Styling frame {frame_path}...")
+        content_image = load_image(frame_path)
+        result = style_frame(pipe, content_image, PROMPT, style_embeds)
+        result.save(f"{OUTPUT_DIR}/{i}.png")
 
 if __name__ == "__main__":
     main()
