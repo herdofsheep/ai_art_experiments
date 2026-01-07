@@ -1,5 +1,5 @@
 ### SD_img2img_animation1.png:
-    created with `scripts/animation_scripts/SD_animation_simple.py` using
+    created with `scripts/animation/SD_animation_simple.py` using
     ANIMATION_DIR = (folder with this in) `animation_frame1.png`
     STYLE_IMAGE_PATH = `sexdoll.jpg`
 
@@ -26,7 +26,7 @@
     CONTENT_IMAGE_PATH = 'grid1.jpg'
 
 ### tensorflow_animation_frame.png:
-    created with `scripts/animation_scripts/tensorflow_animation.py` using
+    created with `scripts/animation/tensorflow_animation.py` using
     STYLE_IMAGE_PATH = 'sexdoll.jpg' (actually a similar image but I'm too lazy to perfectly recreate)
     CONTENT_IMAGE_PATH = 'animation_frame1.png'
 
