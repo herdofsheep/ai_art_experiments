@@ -1,5 +1,7 @@
 import torch
 from PIL import Image
+import os
+import re
 
 def load_img_to_img_pipeline(adapter_scale=0.8):
     print("Loading image to image generation pipeline with IP-Adapter...")
@@ -50,3 +52,20 @@ def generate_img_to_img(pipe, style_image_path, content_image_path, output_path=
         image.save(output_path)
         print(f"Image saved to {output_path}")
     return image
+
+
+
+def get_last_styled_frame(output_dir):
+    existing = [f for f in os.listdir(output_dir) if re.match(r'^\d+\.png$', f)]
+    if existing:
+        nums = [int(re.match(r'^(\d+)\.png$', f).group(1)) for f in existing]
+        last_frame_index = max(nums)
+    else:
+        last_frame_index = 0
+
+    if os.path.exists(f"{output_dir}/{last_frame_index}.png"):
+        image = Image.open(f"{output_dir}/{last_frame_index}.png")
+    else:
+        image = None
+
+    return last_frame_index, image

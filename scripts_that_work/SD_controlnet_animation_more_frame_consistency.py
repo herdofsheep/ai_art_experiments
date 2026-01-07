@@ -10,7 +10,9 @@ import numpy as np
 from PIL import Image
 from glob import glob
 
-OUTPUT_DIR = 'outputs/SD_controlnet_animation_boob'
+from tools import get_last_styled_frame
+
+OUTPUT_DIR = 'outputs/SD_boob_animation2'
 ANIMATION_DIR = "data/boob_animation"
 STYLE_IMAGE_PATH = "data/sciency.webp"
 PROMPT = "A scientific diagram"
@@ -20,24 +22,25 @@ TRANSFORM_STRENGTH = 0.75 # strength allowed deviation from original image
 CONTROLNET_CONDITIONING_SCALE = 0.5 # strength of edges, style constraint
 NUM_INFERENCE_STEPS = 15 # balanced steps
 GUIDANCE_SCALE = 4.0 # moderate guidance (MPS can be unstable with high values)
+PREV_FRAME_INFLUENCE = 0.7 # 0.0 = pure content, 1.0 = pure previous styled frame
 
 # METHOD = "mps" #mac
-METHOD = "cuda" #windows
-BIT = torch.float16 #use float32 on mac and float16 on Windows
+DEVICE = "cuda" #windows
+TORCH_DTYPE = torch.float16 #use float32 on mac and float16 on Windows
 
 def load_video_style_pipe():
     # 1. Load ControlNet (Canny is best for keeping animation lines)
     controlnet = ControlNetModel.from_pretrained(
-        "lllyasviel/sd-controlnet-canny", torch_dtype=BIT,
+        "lllyasviel/sd-controlnet-canny", torch_dtype=TORCH_DTYPE,
     )
 
     # 2. Load the main Pipeline
     pipe = StableDiffusionControlNetImg2ImgPipeline.from_pretrained(
         "runwayml/stable-diffusion-v1-5",
         controlnet=controlnet,
-        torch_dtype=BIT,
+        torch_dtype=TORCH_DTYPE,
         safety_checker=None
-    ).to(METHOD)
+    ).to(DEVICE)
 
     # 3. Use DPM++ scheduler (better quality) & stronger IP-Adapter for style
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
@@ -54,13 +57,22 @@ def get_canny_image(image):
     image = np.concatenate([image, image, image], axis=2)
     return Image.fromarray(image)
 
+
+
 def style_frame(pipe, content_img, prompt, style_embeds, prev_styled_frame=None):
     content_img = content_img.resize((512, 512))
     canny_img = get_canny_image(content_img)
 
-    # Use previous styled frame as starting point for frame consistency
-    # ControlNet edges from current frame still guide the structure
-    init_image = prev_styled_frame if prev_styled_frame is not None else content_img
+    # Blend previous styled frame with current content for init image
+    # This prevents style drift while maintaining frame consistency
+    if prev_styled_frame is not None:
+        prev_styled_frame = prev_styled_frame.resize((512, 512))
+        prev_arr = np.array(prev_styled_frame).astype(np.float32)
+        curr_arr = np.array(content_img).astype(np.float32)
+        blended = (PREV_FRAME_INFLUENCE * prev_arr + (1 - PREV_FRAME_INFLUENCE) * curr_arr)
+        init_image = Image.fromarray(blended.astype(np.uint8))
+    else:
+        init_image = content_img
 
     # The magic happens here: 
     # image = previous styled output (or content for first frame)
@@ -95,10 +107,13 @@ def main():
 
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
+
+    last_styled_frame_index, prev_styled_frame = get_last_styled_frame(OUTPUT_DIR)
     animation_frames = sorted(glob(f'{ANIMATION_DIR}/*.png'))
     
-    prev_styled_frame = None
     for i, frame_path in enumerate(animation_frames):
+        if i <= last_styled_frame_index:
+            continue
         print(f"Styling frame {i} to {OUTPUT_DIR}...")
         content_image = load_image(frame_path)
         result = style_frame(pipe, content_image, PROMPT, style_embeds, prev_styled_frame)
