@@ -1,15 +1,3 @@
-OUTPUT_DIR = 'outputs/stable_diffusion_animation_more_blend'
-ANIMATION_DIR = "data/animation_paler"
-STYLE_IMAGE_PATH = "data/style2/sex_doll2.jpg"
-PROMPT = "A sex doll, 8k, detailed, realistic"
-
-ADAPTER_SCALE = 1.0 # strength of style influence on output image
-TRANSFORM_STRENGTH = 0.75 # strength allowed deviation from original image
-CONTROLNET_CONDITIONING_SCALE = 0.5 # strength of edges, style constraint
-NUM_INFERENCE_STEPS = 15 # balanced steps
-GUIDANCE_SCALE = 4.0 # moderate guidance (MPS can be unstable with high values)
-PREV_FRAME_INFLUENCE = 0.7 # 0.0 = pure content, 1.0 = pure previous styled frame
-
 import os
 os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
 os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'huggingface')
@@ -24,19 +12,35 @@ from glob import glob
 
 from tools import get_last_styled_frame
 
+OUTPUT_DIR = 'outputs/SD_boob_animation2'
+ANIMATION_DIR = "data/boob_animation"
+STYLE_IMAGE_PATH = "data/sciency.webp"
+PROMPT = "A scientific diagram"
+
+ADAPTER_SCALE = 1.0 # strength of style influence on output image
+TRANSFORM_STRENGTH = 0.75 # strength allowed deviation from original image
+CONTROLNET_CONDITIONING_SCALE = 0.5 # strength of edges, style constraint
+NUM_INFERENCE_STEPS = 15 # balanced steps
+GUIDANCE_SCALE = 4.0 # moderate guidance (MPS can be unstable with high values)
+PREV_FRAME_INFLUENCE = 0.7 # 0.0 = pure content, 1.0 = pure previous styled frame
+
+# METHOD = "mps" #mac
+DEVICE = "cuda" #windows
+TORCH_DTYPE = torch.float16 #use float32 on mac and float16 on Windows
+
 def load_video_style_pipe():
     # 1. Load ControlNet (Canny is best for keeping animation lines)
     controlnet = ControlNetModel.from_pretrained(
-        "lllyasviel/sd-controlnet-canny", torch_dtype=torch.float32,
+        "lllyasviel/sd-controlnet-canny", torch_dtype=TORCH_DTYPE,
     )
 
     # 2. Load the main Pipeline
     pipe = StableDiffusionControlNetImg2ImgPipeline.from_pretrained(
         "runwayml/stable-diffusion-v1-5",
         controlnet=controlnet,
-        torch_dtype=torch.float32,
+        torch_dtype=TORCH_DTYPE,
         safety_checker=None
-    ).to("mps")
+    ).to(DEVICE)
 
     # 3. Use DPM++ scheduler (better quality) & stronger IP-Adapter for style
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
