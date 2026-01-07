@@ -94,10 +94,12 @@ def main():
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
-    last_styled_frame, prev_styled_frame = get_last_styled_frame(OUTPUT_DIR)
-    animation_frames = sorted(glob(f'{ANIMATION_DIR}/*.png'))[last_styled_frame:]
+    last_styled_frame_index, _ = get_last_styled_frame(OUTPUT_DIR)
+    animation_frames = sorted(glob(f'{ANIMATION_DIR}/*.png'))
 
     for i, frame_path in enumerate(animation_frames):
+        if i <= last_styled_frame_index:
+            continue
         print(f"Styling frame {i} to {OUTPUT_DIR}...")
         content_image = load_image(frame_path)
         result = style_frame(pipe, content_image, PROMPT, style_embeds)

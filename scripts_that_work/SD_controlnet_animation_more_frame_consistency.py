@@ -1,13 +1,14 @@
-OUTPUT_DIR = 'outputs/SD_controlnet_animation_boob'
-ANIMATION_DIR = "data/boob_animation"
-STYLE_IMAGE_PATH = "data/content/sciency.webp"
-PROMPT = "A scientific diagram"
+OUTPUT_DIR = 'outputs/stable_diffusion_animation_more_blend'
+ANIMATION_DIR = "data/animation_paler"
+STYLE_IMAGE_PATH = "data/style2/sex_doll2.jpg"
+PROMPT = "A sex doll, 8k, detailed, realistic"
 
 ADAPTER_SCALE = 1.0 # strength of style influence on output image
 TRANSFORM_STRENGTH = 0.75 # strength allowed deviation from original image
 CONTROLNET_CONDITIONING_SCALE = 0.5 # strength of edges, style constraint
 NUM_INFERENCE_STEPS = 15 # balanced steps
 GUIDANCE_SCALE = 4.0 # moderate guidance (MPS can be unstable with high values)
+PREV_FRAME_INFLUENCE = 0.7 # 0.0 = pure content, 1.0 = pure previous styled frame
 
 import os
 os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
@@ -20,6 +21,8 @@ import cv2
 import numpy as np
 from PIL import Image
 from glob import glob
+
+from tools import get_last_styled_frame
 
 def load_video_style_pipe():
     # 1. Load ControlNet (Canny is best for keeping animation lines)
@@ -50,13 +53,22 @@ def get_canny_image(image):
     image = np.concatenate([image, image, image], axis=2)
     return Image.fromarray(image)
 
+
+
 def style_frame(pipe, content_img, prompt, style_embeds, prev_styled_frame=None):
     content_img = content_img.resize((512, 512))
     canny_img = get_canny_image(content_img)
 
-    # Use previous styled frame as starting point for frame consistency
-    # ControlNet edges from current frame still guide the structure
-    init_image = prev_styled_frame if prev_styled_frame is not None else content_img
+    # Blend previous styled frame with current content for init image
+    # This prevents style drift while maintaining frame consistency
+    if prev_styled_frame is not None:
+        prev_styled_frame = prev_styled_frame.resize((512, 512))
+        prev_arr = np.array(prev_styled_frame).astype(np.float32)
+        curr_arr = np.array(content_img).astype(np.float32)
+        blended = (PREV_FRAME_INFLUENCE * prev_arr + (1 - PREV_FRAME_INFLUENCE) * curr_arr)
+        init_image = Image.fromarray(blended.astype(np.uint8))
+    else:
+        init_image = content_img
 
     # The magic happens here: 
     # image = previous styled output (or content for first frame)
@@ -91,10 +103,13 @@ def main():
 
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
+
+    last_styled_frame_index, prev_styled_frame = get_last_styled_frame(OUTPUT_DIR)
     animation_frames = sorted(glob(f'{ANIMATION_DIR}/*.png'))
     
-    prev_styled_frame = None
     for i, frame_path in enumerate(animation_frames):
+        if i <= last_styled_frame_index:
+            continue
         print(f"Styling frame {i} to {OUTPUT_DIR}...")
         content_image = load_image(frame_path)
         result = style_frame(pipe, content_image, PROMPT, style_embeds, prev_styled_frame)

@@ -59,13 +59,13 @@ def get_last_styled_frame(output_dir):
     existing = [f for f in os.listdir(output_dir) if re.match(r'^\d+\.png$', f)]
     if existing:
         nums = [int(re.match(r'^(\d+)\.png$', f).group(1)) for f in existing]
-        num = max(nums)
+        last_frame_index = max(nums)
     else:
-        num = 1
+        last_frame_index = 0
 
-    if os.path.exists(f"{output_dir}/{num}.png"):
-        image = Image.open(f"{output_dir}/{num}.png")
+    if os.path.exists(f"{output_dir}/{last_frame_index}.png"):
+        image = Image.open(f"{output_dir}/{last_frame_index}.png")
     else:
         image = None
 
-    return num - 1, image
+    return last_frame_index, image
