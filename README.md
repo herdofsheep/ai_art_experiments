@@ -23,12 +23,12 @@ pip install -r requirements.txt
 
 5. Choose your script and allocate correct paths eg. STYLE_IMAGE_PATH = "data/<your_file_name>" for the images you populated in step 4.
 
-IF ON WINDOWS- SWITCH `METHOD` to "cuda"
+6. Make sure 
 
-6. Run your script of choice eg. 
-    `python scripts_that_work/SD_controlnet_animation.py`. (Mac)
-    ` python .\scripts_that_work\SD_controlnet_animation.py` (Windows)
- Make sure you are running python from this directory, and expect the runtime to be VERY slow (up to half an hour) before producing any images. Downloading the AI model can take a long time.
+7. Run your script of choice eg. 
+    `python scripts/SD_img_to_img.py`. (Mac)
+    `python .\scripts\SD_img_to_img.py.py` (Windows)
+ Make sure you are running python from this directory, and expect the first pass runtime to be slow (up to half an hour) before producing any images. Downloading the AI model can take a long time.
 
 
 # Common Issues
