@@ -1,6 +1,6 @@
 import os
-os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
-os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'huggingface')
+os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', '..', 'models', 'torch')
+os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), '..', '..', 'models', 'huggingface')
 
 import torch
 from diffusers import StableDiffusionControlNetImg2ImgPipeline, ControlNetModel, DPMSolverMultistepScheduler
@@ -10,19 +10,20 @@ import numpy as np
 from PIL import Image
 from glob import glob
 
-from tools import get_last_styled_frame
+from scripts.tools import get_last_styled_frame
 
-OUTPUT_DIR = 'outputs/SD_boob_animation2'
+OUTPUT_DIR = 'outputs/SD_boob_science'
 ANIMATION_DIR = "data/boob_animation"
-STYLE_IMAGE_PATH = "data/sciency.webp"
-PROMPT = "A scientific diagram"
+STYLE_IMAGE_PATH = "data/science/boy.jpg"
+PROMPT = "A scientific diagram of a sex doll"
 
-ADAPTER_SCALE = 1.0 # strength of style influence on output image
-TRANSFORM_STRENGTH = 0.75 # strength allowed deviation from original image
-CONTROLNET_CONDITIONING_SCALE = 0.5 # strength of edges, style constraint
+# These are the values I used for the boob animation (less style influence)
+ADAPTER_SCALE = 1.0 # strength of style influence on output image (lower = less style)
+TRANSFORM_STRENGTH = 0.5 # strength allowed deviation from original image (lower = closer to original)
+CONTROLNET_CONDITIONING_SCALE = 0.8 # strength of edges, style constraint (higher = preserve original structure)
 NUM_INFERENCE_STEPS = 15 # balanced steps
-GUIDANCE_SCALE = 4.0 # moderate guidance (MPS can be unstable with high values)
-PREV_FRAME_INFLUENCE = 0.7 # 0.0 = pure content, 1.0 = pure previous styled frame
+GUIDANCE_SCALE = 4.0 # moderate guidance (lower = less aggressive changes)
+PREV_FRAME_INFLUENCE = 0.9 # 0.0 = pure content, 1.0 = pure previous styled frame (higher = more consistency)
 
 # METHOD = "mps" #mac
 DEVICE = "cuda" #windows

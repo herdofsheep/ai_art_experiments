@@ -1,9 +1,11 @@
 image_renders/*
 data/*
 outputs/*
+mid_outputs/*
 models/*
 .venv
 .DS_Store
 .env
 Pipfile
 Pipfile.lock
+__pycache__

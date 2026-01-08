@@ -16,8 +16,8 @@ TEMPORAL_BLEND = 0.5
 ADAPTER_SCALE = 0.6
 
 import os
-os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
-os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'huggingface')
+os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', '..',  'models', 'torch')
+os.environ['HF_HOME'] = os.path.join(os.path.dirname(__file__), '..', '..', 'models', 'huggingface')
 
 from huggingface_hub import whoami
 from dotenv import load_dotenv
@@ -25,7 +25,7 @@ from glob import glob
 from PIL import Image
 import numpy as np
 
-from tools import load_img_to_img_pipeline, generate_img_to_img
+from scripts.tools import load_img_to_img_pipeline, generate_img_to_img
 
 load_dotenv()
 

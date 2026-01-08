@@ -12,7 +12,7 @@ ANIMATION_DIR = 'data/animation'
 STYLE_DIR = 'data/style'
 
 import os
-os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', 'models', 'torch')
+os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '..', '..', 'models', 'torch')
 
 import tensorflow as tf
 import numpy as np

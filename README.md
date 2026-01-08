@@ -26,8 +26,7 @@ pip install -r requirements.txt
 6. Make sure 
 
 7. Run your script of choice eg. 
-    `python scripts/SD_img_to_img.py`. (Mac)
-    `python .\scripts\SD_img_to_img.py.py` (Windows)
+    `python -m scripts.animation.SD_img_to_img`
  Make sure you are running python from this directory, and expect the first pass runtime to be slow (up to half an hour) before producing any images. Downloading the AI model can take a long time.
 
 
