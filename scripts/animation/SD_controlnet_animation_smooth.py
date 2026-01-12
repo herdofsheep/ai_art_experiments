@@ -12,18 +12,18 @@ from glob import glob
 
 from scripts.tools import get_last_styled_frame
 
-OUTPUT_DIR = 'outputs/SD_boob_science'
+OUTPUT_DIR = 'outputs/SD_boob_grid'
 ANIMATION_DIR = "data/boob_animation"
-STYLE_IMAGE_PATH = "data/science/boy.jpg"
+STYLE_IMAGE_PATH = "data/grid/grid1.jpg"
 PROMPT = "A scientific diagram of a sex doll"
 
 # These are the values I used for the boob animation (less style influence)
-ADAPTER_SCALE = 1.0 # strength of style influence on output image (lower = less style)
+ADAPTER_SCALE = 0.8 # strength of style influence on output image (lower = less style)
 TRANSFORM_STRENGTH = 0.5 # strength allowed deviation from original image (lower = closer to original)
 CONTROLNET_CONDITIONING_SCALE = 0.8 # strength of edges, style constraint (higher = preserve original structure)
 NUM_INFERENCE_STEPS = 15 # balanced steps
 GUIDANCE_SCALE = 4.0 # moderate guidance (lower = less aggressive changes)
-PREV_FRAME_INFLUENCE = 0.9 # 0.0 = pure content, 1.0 = pure previous styled frame (higher = more consistency)
+PREV_FRAME_INFLUENCE = 0.8 # 0.0 = pure content, 1.0 = pure previous styled frame (higher = more consistency)
 
 # METHOD = "mps" #mac
 DEVICE = "cuda" #windows
