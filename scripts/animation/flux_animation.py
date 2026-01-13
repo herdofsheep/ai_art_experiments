@@ -24,11 +24,12 @@ from scripts.tools import get_last_styled_frame
 # generates high-quality images in just 1-4 steps.
 # ============================================================================
 
-OUTPUT_DIR = 'outputs/flux_animation_grid2'
-ANIMATION_DIR = "data/animation_paler"
-STYLE_PROMPT = "close up wet shiny flesh, realistic"
+OUTPUT_DIR = 'outputs/animation_paler'
+ANIMATION_DIR = "data/flux_animation_grid2"
+STYLE_PROMPT = "Close up bare flesh, dripping with sweat, wet, shiny, realistic. A tangle of bodies, lit by a pale, pink, romatic light."
 
-#next? a tangle of naked bodies, lit by a pale, pink, romatic light. bare flesh, sweaty, realistic. 
+# STYLE_PROMPT = "close up wet shiny flesh, realistic"
+# next? a tangle of naked bodies, lit by a pale, pink, romatic light. bare flesh, sweaty, realistic. 
 
 # FLUX.1-schnell settings
 NUM_INFERENCE_STEPS = 4  # schnell is optimized for 1-4 steps
